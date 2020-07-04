@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>corona</title>
+	<!-- CSS only -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+<!-- JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+	let n=''
+
+	let indD=''
+
+	let staD=''
+
+	const stData=(b)=>{
+		b.style.background='rgba(0,0,0,.075)';
+		var snm=b.children[0].innerHTML
+		for(var i in indD){
+			if(indD[i].state==snm){
+				staD=indD[i].districtData;
+			}
+		}
+		tabb.innerHTML=''
+		for(var i in staD){
+				var ttb=
+				"<tr class='hrw'><th scope='row' class='rw'>"+staD[i].name+"</th><td>"+staD[i].confirmed.toLocaleString('en-IN')+"</td></tr>"
+				tabb.innerHTML+=ttb
+
+		}
+	}
+	
+	const indData=(v)=>{
+		v.style.background='rgba(0,0,0,.075)';
+		if(v.children[0].innerHTML=='India'){
+		fetch('https://api.covidindiatracker.com/state_data.json').then(resp=>resp.json()).then(data=>{
+			indD=data;
+				// tabb.innerHTML=''
+			for(var i in indD){
+				// console.log('ind')
+				var cured=indD[i].confirmed-(indD[i].active+indD[i].deaths)
+				console.log(cured)
+					var ttb=
+				"<tr class='hrw' onclick='stData(this)'><th scope='row' class='rw'>"+indD[i].state+"</th><td>"+indD[i].confirmed.toLocaleString('en-IN')+"</td><td>"+cured.toLocaleString('en-IN')+"</td><td>"+indD[i].deaths.toLocaleString('en-IN')+"</td></tr>"
+				tabb.innerHTML+=ttb
+			}
+		})
+	}
+	}
+	const getDataPos=()=>{
+		fetch('https://api.covid19api.com/summary')
+		.then(resp=>resp.json())
+		.then(data=>{
+			n=data;
+			conf.innerHTML=n.Global.TotalConfirmed.toLocaleString('en-IN')
+			cure.innerHTML=n.Global.TotalRecovered.toLocaleString('en-IN')
+			deth.innerHTML=n.Global.TotalDeaths.toLocaleString('en-IN')
+			// console.log(n.Countries)
+			tabb.innerHTML=''
+			for(var i in data.Countries){
+				// console.log('hi')
+					var ttb=
+				"<tr class='hrw'><th scope='row' class='rw'>"+n.Countries[i].Country+"</th><td>"+n.Countries[i].TotalConfirmed.toLocaleString('en-IN')+"</td><td>"+n.Countries[i].TotalRecovered.toLocaleString('en-IN')+"</td><td>"+n.Countries[i].TotalDeaths.toLocaleString('en-IN')+"</td></tr>"
+				tabb.innerHTML+=ttb
+			}
+		})
+
+		.catch(function(){
+			console.log('error')
+		})
+	}
+</script>
+	<style type="text/css">
+		.head{
+			width: 100%;
+			display: inline-flex;
+			justify-content: center;
+		}
+		.hh1,.hh2,.hh3{
+			margin: 0 40px;
+			text-align: center;
+		}
+		.jumbotron{
+			background: linear-gradient(to right, #feb47b,#ff7e5f,#feb47b);
+			background-size:200%;
+			margin-bottom: 0;
+		}
+		.jumbotron:hover{
+			background-position: right center;
+		}
+
+	</style>
+</head>
+<body>
+		<div class="jumbotron">
+  <h1 class="display-4 text-center">Corona Tracker!!</h1>
+ <div class="head">
+  <span class="hh1"><h2>CONFIRMED</h2>
+  	<h1 id='hh1'></h1></span>
+  <span class="hh2" style="color: green"><h2>CURED</h2><h1 id="hh2"></h1></span>
+  <span class="hh3" style="color: red"><h2>DEATHS</h2><h1 id="hh3"></h1></span>
+</div>
+  <p class="lead">Search by Country names</p>
+  <hr class="my-4">
+	    <div class="input-group mb-3">
+	  <input type="text" class="form-control" placeholder="Country" aria-label="Recipient's username" aria-describedby="button-addon2">
+	  <div class="input-group-append">
+	    <button class="btn btn-outline-danger" type="button" id="button-addon2" onclick='sch()'>Search</button>
+	    <button class="btn btn-outline-danger" type="button" id="button-addon2" onclick='getDataPos()'>View All</button>
+	  </div>
+	</div>
+</div>
+<table class="table table-hover">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Country</th>
+      <th scope="col">Confirmed</th>
+      <th scope="col">Recovered</th>
+      <th scope="col">Deaths</th>
+    </tr>
+  </thead>
+  <tbody id=tbod>
+
+  </tbody>
+</table>
+
+		<script type="text/javascript">
+	const conf=document.getElementById('hh1')
+	const deth=document.getElementById('hh3')
+	const cure=document.getElementById('hh2')
+	const tabb=document.getElementById('tbod')
+	getDataPos()
+	const hall=document.getElementsByClassName('hrw');
+	const all=document.getElementsByClassName('rw');
+	function sch(){
+		var inn = document.getElementsByTagName('input')[0].value;
+		var txt=inn[0].toUpperCase()+inn.slice(1);
+		tabb.innerHTML='';
+		for(var i in n.Countries){
+					var ttb=
+				"<tr class='hrw'><th scope='row' class='rw'>"+n.Countries[i].Country+"</th><td>"+n.Countries[i].TotalConfirmed.toLocaleString('en-IN')+"</td><td>"+n.Countries[i].TotalRecovered.toLocaleString('en-IN')+"</td><td>"+n.Countries[i].TotalDeaths.toLocaleString('en-IN')+"</td></tr>"
+				tabb.innerHTML+=ttb;
+			}
+		for(var i in hall){
+			if(hall[i].children[0].innerHTML.includes(txt)){
+				var scl = hall[i].children;
+				var ttb=
+				"<tr onclick='indData(this)'><th scope='row' class='rw'>"+scl[0].innerHTML+"</th><td>"+scl[1].innerHTML+"</td><td>"+scl[2].innerHTML+"</td><td>"+scl[3].innerHTML+"</td></tr>";
+				tabb.innerHTML=ttb;
+			}
+		}
+
+	}
+	
+		</script>
+</body>
+</html>
